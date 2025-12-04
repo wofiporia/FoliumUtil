@@ -1,6 +1,6 @@
 # FoliumUtil
 
-一个简洁的Go工具包，提供密码哈希、随机字符串生成和数据验证功能。
+一个简洁的Go工具包，提供密码哈希、随机字符串生成、数据验证和Token管理功能。
 
 ## 版本
 
@@ -80,6 +80,42 @@ if err != nil {
 }
 ```
 
+### ftoken - Token管理
+
+```go
+import "github.com/wofiporia/foliumutil/ftoken"
+
+// 创建JWT Maker
+jwtMaker, err := ftoken.NewJwtMaker("your-secret-key-here")
+if err != nil {
+    log.Fatal(err)
+}
+
+// 或创建PASETO Maker
+pasetoMaker, err := ftoken.NewPasetoMaker("your-32-byte-secret-key-here")
+if err != nil {
+    log.Fatal(err)
+}
+
+// 创建Token
+username := "testuser"
+role := "user"
+duration := time.Hour
+
+token, payload, err := jwtMaker.CreateToken(username, role, duration)
+if err != nil {
+    log.Fatal(err)
+}
+
+// 验证Token
+payload, err = jwtMaker.VerifyToken(token)
+if err != nil {
+    log.Fatal("Token验证失败:", err)
+}
+
+fmt.Printf("用户: %s, 角色: %s\n", payload.Username, payload.Role)
+```
+
 ## 验证规则
 
 ### 用户名 (ValidateUsername)
@@ -106,10 +142,12 @@ package main
 import (
     "fmt"
     "log"
+    "time"
     
     "github.com/wofiporia/foliumutil/fpassword"
     "github.com/wofiporia/foliumutil/frandom"
     "github.com/wofiporia/foliumutil/fvalidator"
+    "github.com/wofiporia/foliumutil/ftoken"
 )
 
 func main() {
@@ -136,8 +174,34 @@ func main() {
         return
     }
     
+    // 创建JWT Token
+    jwtMaker, err := ftoken.NewJwtMaker(frandom.RandomString(32))
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    jwtToken, jwtPayload, err := jwtMaker.CreateToken("testuser", "admin", time.Hour)
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    // 创建PASETO Token
+    pasetoMaker, err := ftoken.NewPasetoMaker(frandom.RandomString(32))
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    pasetoToken, pasetoPayload, err := pasetoMaker.CreateToken("testuser", "user", time.Hour)
+    if err != nil {
+        log.Fatal(err)
+    }
+    
     fmt.Printf("密码: %s\n", password)
     fmt.Printf("哈希: %s\n", hashedPassword)
+    fmt.Printf("JWT Token: %s\n", jwtToken)
+    fmt.Printf("JWT Token用户: %s (角色: %s)\n", jwtPayload.Username, jwtPayload.Role)
+    fmt.Printf("PASETO Token: %s\n", pasetoToken)
+    fmt.Printf("PASETO Token用户: %s (角色: %s)\n", pasetoPayload.Username, pasetoPayload.Role)
     fmt.Println("所有验证通过!")
 }
 ```
@@ -147,6 +211,28 @@ func main() {
 - Go 1.21+
 - github.com/stretchr/testify v1.11.1
 - golang.org/x/crypto v0.45.0
+- github.com/dgrijalva/jwt-go v3.2.0+incompatible
+
+## Token模块说明
+
+### 支持的Token类型
+
+1. **JWT (JSON Web Token)**
+   - 使用HMAC-SHA256签名算法
+   - 广泛支持，易于调试
+   - 适合Web应用和API
+
+2. **PASETO (Platform-Agnostic Security Tokens)**
+   - 更现代、更安全的Token格式
+   - 防止常见攻击（如长度泄露攻击）
+   - 适合高安全性要求的应用
+
+### 安全注意事项
+
+- JWT密钥建议至少32字符
+- PASETO密钥必须是32字节长度
+- 密钥应该从环境变量或配置文件读取，不要硬编码
+- Token过期时间根据业务需求设置，建议不要过长
 
 ## 作者留言
 
