@@ -151,8 +151,8 @@ import (
 )
 
 func main() {
-    // 生成随机密码
-    password := frandom.RandomString(8)
+    
+    password := "F0liumUtil"
     
     // 哈希密码
     hashedPassword, err := fpassword.HashPassword(password)
