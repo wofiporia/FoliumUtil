@@ -148,6 +148,16 @@ func main() {
 - github.com/stretchr/testify v1.11.1
 - golang.org/x/crypto v0.45.0
 
+## 作者留言
+
+FoliumUtil主要是用来记录我做web项目写过的utils
+
+感谢你使用 FoliumUtil！这是一个为简化日常开发而创建的工具包。如果你觉得这个包对你有帮助，欢迎给个Star ⭐。
+
+如果你发现了bug或有改进建议，欢迎提交Issue或Pull Request。
+
+希望这个小小的工具包能让你的开发更高效！
+
 ## 许可证
 
 MIT License
