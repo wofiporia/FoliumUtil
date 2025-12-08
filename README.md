@@ -1,6 +1,6 @@
 # FoliumUtil
 
-一个简洁的Go工具包，提供密码哈希、随机字符串生成、数据验证和Token管理功能。
+一个简洁的Go工具包，提供密码哈希、随机字符串生成、数据验证、Token管理和AI连接功能。
 
 ## 版本
 
@@ -116,6 +116,37 @@ if err != nil {
 fmt.Printf("用户: %s, 角色: %s\n", payload.Username, payload.Role)
 ```
 
+### faiconn - AI连接器
+
+```go
+import "github.com/wofiporia/foliumutil/faiconn"
+
+// 创建OpenAI兼容API连接器
+conn, err := faiconn.NewCustomConn(faiconn.AIConfig{
+    Model:    "deepseek-ai/DeepSeek-V3.1-Terminus",
+    URL:      "https://api.siliconflow.cn/v1",
+    APIKey:   "sk-your-api-key-here",
+    Provider: "siliconflow",
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+// 发送消息
+response, err := conn.SendMessage("你好")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Println(response)
+
+// 获取连接信息
+fmt.Printf("模型: %s\n", conn.GetModel())
+fmt.Printf("提供商: %s\n", conn.GetProvider())
+
+// 关闭连接
+defer conn.Close()
+```
+
 ## 验证规则
 
 ### 用户名 (ValidateUsername)
@@ -148,6 +179,7 @@ import (
     "github.com/wofiporia/foliumutil/frandom"
     "github.com/wofiporia/foliumutil/fvalidator"
     "github.com/wofiporia/foliumutil/ftoken"
+    "github.com/wofiporia/foliumutil/faiconn"
 )
 
 func main() {
@@ -202,6 +234,25 @@ func main() {
     fmt.Printf("JWT Token用户: %s (角色: %s)\n", jwtPayload.Username, jwtPayload.Role)
     fmt.Printf("PASETO Token: %s\n", pasetoToken)
     fmt.Printf("PASETO Token用户: %s (角色: %s)\n", pasetoPayload.Username, pasetoPayload.Role)
+    
+    // AI连接器示例
+    aiConn, err := faiconn.NewCustomConn(faiconn.AIConfig{
+        Model:    "deepseek-ai/DeepSeek-V3.1-Terminus",
+        URL:      "https://api.siliconflow.cn/v1",
+        APIKey:   "sk-your-api-key-here",
+        Provider: "siliconflow",
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    aiResponse, err := aiConn.SendMessage("你好")
+    if err != nil {
+        fmt.Println("AI调用失败:", err)
+    } else {
+        fmt.Printf("AI回复: %s\n", aiResponse)
+    }
+    
     fmt.Println("所有验证通过!")
 }
 ```
@@ -233,6 +284,13 @@ func main() {
 - PASETO密钥必须是32字节长度
 - 密钥应该从环境变量或配置文件读取，不要硬编码
 - Token过期时间根据业务需求设置，建议不要过长
+
+## AiConn模块说明
+
+### 支持的api类型
+
+1. **OpenAI 兼容 API**
+ 
 
 ## 作者留言
 
