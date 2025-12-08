@@ -4,12 +4,12 @@
 
 ## 版本
 
-当前版本: v1.0.0
+当前版本: v1.0.1
 
 ## 安装
 
 ```bash
-go get github.com/wofiporia/foliumutil@v1.0.0
+go get github.com/wofiporia/foliumutil@v1.0.1
 ```
 
 ## 功能模块
