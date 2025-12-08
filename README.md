@@ -294,7 +294,7 @@ func main() {
 
 ## 作者留言
 
-FoliumUtil主要是用来记录我做web项目写过的utils
+FoliumUtil主要是用来记录我做web项目写过和用过的utils
 
 感谢你使用 FoliumUtil！这是一个为简化日常开发而创建的工具包。如果你觉得这个包对你有帮助，欢迎给个Star ⭐。
 
